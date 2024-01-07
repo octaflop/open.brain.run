@@ -7,7 +7,7 @@ import feedparser
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from assets.constants import FEED_URL
+from newsie.constants import FEED_URL
 
 
 if hasattr(ssl, '_create_unverified_context'):
