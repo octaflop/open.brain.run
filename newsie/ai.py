@@ -49,4 +49,5 @@ def generate_summary(
     # Define StuffDocumentsChain
     stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="docs")
 
-    return stuff_chain.invoke(docs)
+    summary = stuff_chain.invoke(docs)
+    return summary

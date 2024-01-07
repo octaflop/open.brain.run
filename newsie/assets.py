@@ -10,17 +10,19 @@ import pandas as pd
 from .constants import FEED_URL
 from .ai import generate_summary
 from dagster import asset, Config, AssetExecutionContext
+from dagster_slack import SlackResource
 
 from .constants import FEED_DT_FMT
 from .utils import query_news, extract_html
 
 
-def get_summary(text, model, context):
+def get_summary(text, model, context, slack):
     summary = generate_summary(
         text,
         model=model,
     )
     context.log.info(f"Generated summary:\n{summary}")
+    slack.get_client().chat_postMessage(channel="#general", text=f"{summary}")
     return summary
 
 
@@ -104,13 +106,13 @@ def download_html(
 
 @asset(io_manager_key="db_io_manager")
 def summarize_articles(
-        context, download_html: pd.DataFrame, config: SummarizationConfig
+        context, download_html: pd.DataFrame, config: SummarizationConfig, slack: SlackResource
 ) -> pd.DataFrame:
     download_html.dropna(subset=['content'], inplace=True)
     download_html['content'] = download_html['content'].astype(str)
     download_html = download_html[download_html['content'].str.len() >= 100]
     download_html["summary"] = download_html["content"].apply(
-        lambda x: get_summary(x, config.model, context)
+        lambda x: get_summary(x, config.model, context, slack)
     )
 
     return download_html

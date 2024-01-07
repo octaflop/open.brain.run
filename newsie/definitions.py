@@ -27,7 +27,7 @@ scrape_scholar_job = define_asset_job(
 
 @op
 def slack_hi(slack: SlackResource):
-    slack.get_client().chat_postMessage(channel="#noise", text=":wave: Howdy!")
+    slack.get_client().chat_postMessage(channel="#general", text=":wave: Howdy!")
 
 
 @job
@@ -53,6 +53,7 @@ defs = Definitions(
     jobs=[
         scrape_scholar_job,
         everything_job,
+        summarized_job
     ],
     resources=resources,
 )
