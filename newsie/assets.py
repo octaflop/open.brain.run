@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 import urllib
@@ -22,7 +23,7 @@ def get_summary(text, model, context, slack):
         model=model,
     )
     context.log.info(f"Generated summary:\n{summary}")
-    slack.get_client().chat_postMessage(channel="#general", text=f"{summary}")
+    slack.get_client().chat_postMessage(channel="#general", text=f"{summary.get('output_text', 'No summary sads')}")
     return summary
 
 
