@@ -8,7 +8,7 @@ from dagster import (
     AssetSelection,
     load_assets_from_modules,
     EnvVar,
-    job, op
+    job, op, Config
 )
 from dagster_duckdb_pandas import DuckDBPandasIOManager
 from dagster_slack import SlackResource
@@ -19,8 +19,9 @@ if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
 
 webscraper_assets = load_assets_from_modules([assets])
-everything_job = define_asset_job("everything_everywhere_job", selection="*")
-scrape_scholar_job = define_asset_job(
+everything_job = define_asset_job("Do it All", selection="*")
+
+news_scrapes = define_asset_job(
     "NewScrapes", selection=AssetSelection.groups("webscrapers")
 )
 
@@ -51,7 +52,7 @@ all_assets = [*webscraper_assets]
 defs = Definitions(
     assets=all_assets,
     jobs=[
-        scrape_scholar_job,
+        news_scrapes,
         everything_job,
         summarized_job
     ],

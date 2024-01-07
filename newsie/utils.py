@@ -1,8 +1,11 @@
 import time
 import urllib.request
+from typing import List
 
 import feedparser
 from bs4 import BeautifulSoup
+
+from newsie.ai import generate_summary
 
 
 def query_news(url: str, num_tries: int = 10):
@@ -31,9 +34,57 @@ def extract_html(link, context):
     except urllib.error.HTTPError as e:
         context.log.warning(f"HTTPError when retrieving {html_link}: {e}")
         return None
+    except Exception as e:
+        context.log.error(f"Exception when retrieving {html_link}: {e}")
+        return None
     soup = BeautifulSoup(html_resp, "html.parser")
     article = str(soup.find("article"))
     context.log.info(
         f"Captured {len(article)} chars from article html of {link.get('title')}"
     )
     return article
+
+
+def get_summary(text, model, context, slack):
+    summary = generate_summary(
+        text,
+        model=model,
+    )
+    context.log.info(f"Generated summary:\n{summary}")
+    slack.get_client().chat_postMessage(channel="#general", text=f"{summary.get('output_text', 'No summary sads')}")
+    return summary
+
+
+def extract_links(html_content_list: List):
+    try:
+        html_content = html_content_list[0]['value'] if html_content_list else ''
+    except Exception as e:
+        print(e)
+        return [], []
+
+    soup = BeautifulSoup(html_content, "html.parser")
+    links = [(a.text, a['href']) for a in soup.find_all('a', href=True)]
+    link_texts = [link[0] for link in links]
+    link_hrefs = [link[1] for link in links]
+    return link_texts, link_hrefs
+
+
+# def extract_html(html_link):
+#     if html_link == '':
+#         return
+#     try:
+#         print(f"Now reading {html_link}")
+#         html_resp = urllib.request.urlopen(html_link).read()
+#     except urllib.error.HTTPError as e:
+#         print(e)
+#         return None
+#     except urllib.error.URLError as e:
+#         print(e)
+#         return None
+#     except Exception as e:
+#         print(e)
+#         return None
+#     soup = BeautifulSoup(html_resp, "html.parser")
+#     article = str(soup.find("article"))
+#     print(f"Got an article with len {len(article)}")
+#     return article
