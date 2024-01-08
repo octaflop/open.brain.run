@@ -11,15 +11,12 @@ from dagster import (
 )
 from dagster_duckdb_pandas import DuckDBPandasIOManager
 from dagster_slack import SlackResource
-import duckdb
 from . import assets
 from .constants import PROJECT_DIR
 
 if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
 
-duckdb_connection = duckdb.connect()
-duckdb_connection.execute("SET GLOBAL pandas_analyze_sample=100000")
 
 webscraper_assets = load_assets_from_modules([assets])
 everything_job = define_asset_job("DoItAll", selection="*")

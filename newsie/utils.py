@@ -72,13 +72,7 @@ def extract_metadata(text: str, model: str, context: AssetExecutionContext, slac
     return metadata
 
 
-def extract_links(html_content_list: List):
-    try:
-        html_content = html_content_list[0]['value'] if html_content_list else ''
-    except Exception as e:
-        print(e)
-        return [], []
-
+def extract_links(html_content: str):
     soup = BeautifulSoup(html_content, "html.parser")
     links = [(a.text, a['href']) for a in soup.find_all('a', href=True)]
     link_texts = [link[0] for link in links]

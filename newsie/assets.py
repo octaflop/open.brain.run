@@ -22,7 +22,13 @@ class SummarizationConfig(Config):
 def gathered_news(context: AssetExecutionContext) -> pd.DataFrame:
     context.log.info(f"Parsing {FEED_URL}")
     feed = feedparser.parse(FEED_URL)
-    df = pd.DataFrame(feed.entries)
+    df = pd.json_normalize(feed.entries)
+    df = df.fillna('')
+    df = df.convert_dtypes()
+    df.set_index('link')
+    df = df.drop(columns=['links', 'authors', 'published_parsed'])
+    # assume df is your DataFrame and 'content' is the column with list of dicts
+    df['content'] = df['content'].apply(lambda x: x[0]['value'] if x else '').astype(str)
     context.log.info(f"Parsed {FEED_URL} to df, now extracting links")
 
     df['link_texts'], df['link_hrefs'] = zip(*df['content'].apply(extract_links))
