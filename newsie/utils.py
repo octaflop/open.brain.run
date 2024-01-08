@@ -1,11 +1,12 @@
 import time
 import urllib.request
-from typing import List
+from typing import List, Sequence
 
 import feedparser
 from bs4 import BeautifulSoup
+from langchain_core.documents import Document
 
-from newsie.ai import generate_summary
+from newsie.ai import generate_summary, generate_metadata
 
 
 def query_news(url: str, num_tries: int = 10):
@@ -53,6 +54,20 @@ def get_summary(text, model, context, slack):
     context.log.info(f"Generated summary:\n{summary}")
     slack.get_client().chat_postMessage(channel="#general", text=f"{summary.get('output_text', 'No summary sads')}")
     return summary
+
+
+def extract_metadata(text, model, context, slack) -> Sequence[Document]:
+    metadata = generate_metadata(
+        text,
+        model=model
+    )
+    context.log.info(f"Generated metadata for article:\n {metadata}")
+    slack_msg = f"""
+    Pulled Metadata for article:
+    {metadata}
+    """
+    slack.get_client().chat_postMessage(channel="#general", text=slack_msg)
+    return metadata
 
 
 def extract_links(html_content_list: List):

@@ -60,6 +60,18 @@ def download_html(
 
     return final_df
 
+@asset(io_manager_key="db_io_manager")
+def grok_metadata(
+        context, download_html: pd.DataFrame, config: SummarizationConfig, slack: SlackResource
+) -> pd.DataFrame:
+    download_html.dropna(subset=['content'], inplace=True)
+    download_html['content'] = download_html['content'].astype(str)
+    download_html = download_html[download_html['content'].str.len() >= 100]
+    download_html["doc_metadata"] = download_html["content"].apply(
+        lambda x: grok_metadata(x, config.model, context, slack)
+    )
+
+    return download_html
 
 @asset(io_manager_key="db_io_manager")
 def summarize_articles(
