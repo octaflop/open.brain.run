@@ -7,7 +7,6 @@ from langchain.schema import Document
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
 )
-from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain.prompts import PromptTemplate
 from langchain_community.document_transformers.openai_functions import create_metadata_tagger
 

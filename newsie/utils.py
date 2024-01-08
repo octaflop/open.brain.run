@@ -4,6 +4,8 @@ from typing import List, Sequence
 
 import feedparser
 from bs4 import BeautifulSoup
+from dagster import AssetExecutionContext
+from dagster_slack import SlackResource
 from langchain_core.documents import Document
 
 from newsie.ai import generate_summary, generate_metadata
@@ -27,7 +29,7 @@ def query_news(url: str, num_tries: int = 10):
                 raise Exception(f"Query failed after {num_tries} tries")
 
 
-def extract_html(link, context):
+def extract_html(link, context: AssetExecutionContext):
     html_link = link.get("html_link")
     context.log.info(f"Now retrieving {html_link}")
     try:
@@ -46,7 +48,7 @@ def extract_html(link, context):
     return article
 
 
-def get_summary(text, model, context, slack):
+def get_summary(text: str, model: str, context: AssetExecutionContext, slack: SlackResource):
     summary = generate_summary(
         text,
         model=model,
@@ -56,7 +58,7 @@ def get_summary(text, model, context, slack):
     return summary
 
 
-def extract_metadata(text, model, context, slack) -> Sequence[Document]:
+def extract_metadata(text: str, model: str, context: AssetExecutionContext, slack: SlackResource) -> Sequence[Document]:
     metadata = generate_metadata(
         text,
         model=model

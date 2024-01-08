@@ -9,11 +9,11 @@ setup(
         "dagster-duckdb-pandas",
         "dagster-slack",
         "langchain",
-        "-U lanchain-community",
+        "langchain-community",
         "openai",
         "feedparser",
         "beautifulsoup4",
         "pandas"
     ],
-    extras_require={"dev": ["dagster-webserver", "pytest"]},
+    extras_require={"dev": ["dagster-webserver", "pytest", "jupyter"]},
 )

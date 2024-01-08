@@ -1,20 +1,13 @@
-import json
-from typing import List
 
-import urllib
 
 import feedparser
-from bs4 import BeautifulSoup
-from datetime import datetime
 import pandas as pd
 
 from .constants import FEED_URL
-from .ai import generate_summary
 from dagster import asset, Config, AssetExecutionContext
 from dagster_slack import SlackResource
 
-from .constants import FEED_DT_FMT
-from .utils import query_news, extract_html, get_summary, extract_links
+from .utils import extract_html, get_summary, extract_links
 
 
 class SummarizationConfig(Config):
@@ -26,16 +19,19 @@ class SummarizationConfig(Config):
 
 
 @asset(io_manager_key="db_io_manager")
-def gathered_news(context) -> pd.DataFrame:
+def gathered_news(context: AssetExecutionContext) -> pd.DataFrame:
+    context.log.info(f"Parsing {FEED_URL}")
     feed = feedparser.parse(FEED_URL)
     df = pd.DataFrame(feed.entries)
+    context.log.info(f"Parsed {FEED_URL} to df, now extracting links")
 
     df['link_texts'], df['link_hrefs'] = zip(*df['content'].apply(extract_links))
+    context.log.info(f"Parsed {FEED_URL} to f{df.head()}")
     return df
 
 
 @asset(io_manager_key="db_io_manager")
-def crawl_news(context, gathered_news):
+def crawl_news(context: AssetExecutionContext, gathered_news):
     crawled_df = gathered_news[['id', 'link_texts', 'link_hrefs']].copy()
     crawled_df = crawled_df.set_index(['id']).apply(lambda x: x.explode()).reset_index()
 
@@ -46,6 +42,8 @@ def crawl_news(context, gathered_news):
         *additional_links_df['raw_html'].apply(extract_links))
     additional_links_df = additional_links_df[['id', 'link_texts', 'link_hrefs']].set_index(['id']).apply(
         lambda x: x.explode()).reset_index()
+
+    context.log.info(additional_links_df.head())
     return additional_links_df
 
 
@@ -57,12 +55,13 @@ def download_html(
     gather_news = gathered_news.dropna(subset=["link_texts"])
     # Concatenate the crawled_df with the new dataframe additional_links_df
     final_df = pd.concat([crawl_news, gather_news], ignore_index=True)
+    context.log.info(final_df.head())
 
     return final_df
 
 @asset(io_manager_key="db_io_manager")
 def grok_metadata(
-        context, download_html: pd.DataFrame, config: SummarizationConfig, slack: SlackResource
+        context: AssetExecutionContext, download_html: pd.DataFrame, config: SummarizationConfig, slack: SlackResource
 ) -> pd.DataFrame:
     download_html.dropna(subset=['content'], inplace=True)
     download_html['content'] = download_html['content'].astype(str)
@@ -75,7 +74,7 @@ def grok_metadata(
 
 @asset(io_manager_key="db_io_manager")
 def summarize_articles(
-        context, download_html: pd.DataFrame, config: SummarizationConfig, slack: SlackResource
+        context: AssetExecutionContext, download_html: pd.DataFrame, config: SummarizationConfig, slack: SlackResource
 ) -> pd.DataFrame:
     download_html.dropna(subset=['content'], inplace=True)
     download_html['content'] = download_html['content'].astype(str)
