@@ -29,8 +29,7 @@ def query_news(url: str, num_tries: int = 10):
                 raise Exception(f"Query failed after {num_tries} tries")
 
 
-def extract_html(link, context: AssetExecutionContext):
-    html_link = link.get("html_link")
+def extract_html(html_link, context: AssetExecutionContext):
     context.log.info(f"Now retrieving {html_link}")
     try:
         html_resp = urllib.request.urlopen(html_link).read()
@@ -42,9 +41,6 @@ def extract_html(link, context: AssetExecutionContext):
         return None
     soup = BeautifulSoup(html_resp, "html.parser")
     article = str(soup.find("article"))
-    context.log.info(
-        f"Captured {len(article)} chars from article html of {link.get('title')}"
-    )
     return article
 
 

@@ -1,5 +1,3 @@
-
-
 import feedparser
 import pandas as pd
 
@@ -15,7 +13,6 @@ class SummarizationConfig(Config):
     model: str = "gpt-3.5-turbo-1106"
     chunk_size: int = 4000
     max_tokens: int = 3000
-
 
 
 @asset(io_manager_key="db_io_manager")
@@ -41,11 +38,11 @@ def crawl_news(context: AssetExecutionContext, gathered_news):
     crawled_df = gathered_news[['id', 'link_texts', 'link_hrefs']].copy()
     crawled_df = crawled_df.set_index(['id']).apply(lambda x: x.explode()).reset_index()
 
-    crawled_df['raw_html'] = crawled_df['link_hrefs'].astype(str).replace('nan', '').apply(extract_html)
+    crawled_df['raw_html'] = crawled_df['link_hrefs'].astype(str).replace('nan', '').apply(lambda x: extract_html(x, context))
 
     additional_links_df = crawled_df.copy()
     additional_links_df['link_texts'], additional_links_df['link_hrefs'] = zip(
-        *additional_links_df['raw_html'].apply(extract_links))
+        *additional_links_df['raw_html'].apply(lambda x: extract_links(x, context)))
     additional_links_df = additional_links_df[['id', 'link_texts', 'link_hrefs']].set_index(['id']).apply(
         lambda x: x.explode()).reset_index()
 
@@ -65,6 +62,7 @@ def download_html(
 
     return final_df
 
+
 @asset(io_manager_key="db_io_manager")
 def grok_metadata(
         context: AssetExecutionContext, download_html: pd.DataFrame, config: SummarizationConfig, slack: SlackResource
@@ -77,6 +75,7 @@ def grok_metadata(
     )
 
     return download_html
+
 
 @asset(io_manager_key="db_io_manager")
 def summarize_articles(
