@@ -1,6 +1,12 @@
 # keep this clean
 *.duckdb
 *.duckdb.wal
+.nux/
+.telemetry/
+# dagster
+history/
+schedules/
+storage/
 # keep this private
 .envrc  
 tmp*/

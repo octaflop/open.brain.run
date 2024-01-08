@@ -42,7 +42,7 @@ def crawl_news(context: AssetExecutionContext, gathered_news):
 
     additional_links_df = crawled_df.copy()
     additional_links_df['link_texts'], additional_links_df['link_hrefs'] = zip(
-        *additional_links_df['raw_html'].apply(lambda x: extract_links(x, context)))
+        *additional_links_df['raw_html'].apply(extract_links))
     additional_links_df = additional_links_df[['id', 'link_texts', 'link_hrefs']].set_index(['id']).apply(
         lambda x: x.explode()).reset_index()
 

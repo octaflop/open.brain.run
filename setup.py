@@ -13,7 +13,9 @@ setup(
         "openai",
         "feedparser",
         "beautifulsoup4",
-        "pandas"
+        "pandas",
+        "matplotlib",
+        "networkx"
     ],
     extras_require={"dev": ["dagster-webserver", "pytest", "jupyter"]},
 )
