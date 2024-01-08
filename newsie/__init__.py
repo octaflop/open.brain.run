@@ -1,1 +1,1 @@
-from . import assets
+from .definitions import defs
