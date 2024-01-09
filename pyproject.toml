@@ -9,7 +9,7 @@ description = ""  # Add your description
 authors = ["faris <faris@faris.dev>"]  # Update with your details
 
 [tool.poetry.dependencies]
-python = "^3.8"  # Specify your Python version
+python = "^3.8.1"  # Specify your Python version
 dagster = "*"
 dagster-cloud = "*"
 dagster-duckdb-pandas = "*"
