@@ -15,7 +15,8 @@ setup(
         "beautifulsoup4",
         "pandas",
         "matplotlib",
-        "networkx"
+        "networkx",
+        "psycopg[binary]"
     ],
     extras_require={"dev": ["dagster-webserver", "pytest", "jupyter"]},
 )
