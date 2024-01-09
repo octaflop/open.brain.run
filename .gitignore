@@ -6,6 +6,11 @@ schedules/
 storage/
 *.duckdb
 *.duckdb.wal
+.nux/
+.telemetry/
+history/
+schedules/
+storage/
 # keep this private
 .envrc  
 tmp*/
