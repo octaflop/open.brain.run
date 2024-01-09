@@ -8,6 +8,7 @@ history/
 schedules/
 storage/
 # keep this private
+.env
 .envrc  
 tmp*/
 ### Python template

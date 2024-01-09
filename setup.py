@@ -16,7 +16,8 @@ setup(
         "pandas",
         "matplotlib",
         "networkx",
-        "psycopg[binary]"
+        "psycopg2-binary",
+        "sqlalchemy"
     ],
     extras_require={"dev": ["dagster-webserver", "pytest", "jupyter"]},
 )
