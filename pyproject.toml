@@ -1,33 +1,29 @@
-
-[tool.dagster]
-module_name = "newsie"
-
 [tool.poetry]
 name = "newsie"
-version = "0.1.0"  # Adjust as needed
-description = ""  # Add your description
-authors = ["faris <faris@faris.dev>"]  # Update with your details
+version = "0.1.0"
+description = ""
+authors = ["faris <faris@faris.dev>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8.1"  # Specify your Python version
-dagster = "*"
-dagster-cloud = "*"
-dagster-duckdb-pandas = "*"
-dagster-slack = "*"
-langchain = "*"
-langchain-community = "*"
-openai = "*"
-feedparser = "*"
-beautifulsoup4 = "*"
-pandas = "*"
-streamlit="*"
+python = ">=3.9.8,<3.13"
+dagster = "^1.5.14"
+dagster-cloud = "^1.5.14"
+streamlit = "^1.29.0"
+dagster-duckdb-pandas = "^0.21.14"
+dagster-slack = "^0.21.14"
+langchain = "^0.1.0"
+langchain-community = "^0.0.11"
+openai = "^1.7.0"
+feedparser = "^6.0.11"
+beautifulsoup4 = "^4.12.2"
+pandas = "<2.1"
 
-[tool.poetry.dev-dependencies]
-dagster-webserver = "*"
-pytest = "*"
-jupyter = "*"
+[tool.poetry.group.dev.dependencies]
+dagster-webserver = "^1.5.14"
+pytest = "^7.4.4"
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
