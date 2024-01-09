@@ -1,9 +1,4 @@
 # keep this clean
-.nux/
-.telemetry/
-history/
-schedules/
-storage/
 *.duckdb
 *.duckdb.wal
 # keep this private
