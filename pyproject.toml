@@ -1,33 +1,6 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [tool.dagster]
 module_name = "newsie"
-
-[tool.poetry]
-name = "newsie"
-version = "0.1.0"  # Adjust as needed
-description = ""  # Add your description
-authors = ["faris <faris@faris.dev>"]  # Update with your details
-
-[tool.poetry.dependencies]
-python = "^3.8"  # Specify your Python version
-dagster = "*"
-dagster-cloud = "*"
-dagster-duckdb-pandas = "*"
-dagster-slack = "*"
-langchain = "*"
-langchain-community = "*"
-openai = "*"
-feedparser = "*"
-beautifulsoup4 = "*"
-pandas = "*"
-streamlit="*"
-
-[tool.poetry.dev-dependencies]
-dagster-webserver = "*"
-pytest = "*"
-jupyter = "*"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
