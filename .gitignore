@@ -1,4 +1,5 @@
 # keep this clean
+*.db
 *.duckdb
 *.duckdb.wal
 .nux/

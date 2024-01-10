@@ -17,7 +17,7 @@ setup(
         "matplotlib",
         "networkx",
         "psycopg2-binary",
-        "sqlalchemy"
+        "sqlmodel",
     ],
-    extras_require={"dev": ["dagster-webserver", "pytest", "jupyter"]},
+    extras_require={"dev": ["dagster-webserver", "pytest", "jupyter", "faker"]},
 )
